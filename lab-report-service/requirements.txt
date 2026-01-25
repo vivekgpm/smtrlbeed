@@ -2,8 +2,8 @@ fastapi
 uvicorn
 python-multipart
 openpyxl
-pandas
 jinja2
 xhtml2pdf
+reportlab
 pydantic
 qrcode[pil]
