@@ -1,0 +1,88 @@
+{
+    "test_types": [
+        {
+            "id": "CC_CUBE",
+            "name": "Compressive Strength of Concrete Cubes",
+            "signatures": {
+                "keywords": [
+                    "Compressive Strength",
+                    "Cube",
+                    "IS 516"
+                ],
+                "required_columns": [
+                    "Sample",
+                    "Load",
+                    "Strength"
+                ]
+            },
+            "extraction_rules": {
+                "table_start_keywords": [
+                    "Sample",
+                    "Mark",
+                    "Weight"
+                ],
+                "table_end_keywords": [
+                    "Average",
+                    "Remark",
+                    "Notes"
+                ],
+                "columns": {
+                    "sample_no": [
+                        "Sample No",
+                        "Sr No",
+                        "Mark"
+                    ],
+                    "date_casting": [
+                        "Date of Casting",
+                        "Casting Date"
+                    ],
+                    "date_testing": [
+                        "Date of Testing",
+                        "Testing Date"
+                    ],
+                    "weight": [
+                        "Weight",
+                        "Wt",
+                        "Mass"
+                    ],
+                    "load": [
+                        "Load",
+                        "Force",
+                        "Reading"
+                    ],
+                    "strength": [
+                        "Strength",
+                        "Stress",
+                        "Mpa"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "AGGREGATE_PHYSICAL",
+            "name": "Physical Properties of Aggregates",
+            "signatures": {
+                "keywords": [
+                    "Specific Gravity",
+                    "Water Absorption",
+                    "Flakiness",
+                    "Elongation"
+                ],
+                "required_columns": []
+            },
+            "extraction_rules": {
+                "type": "key_value",
+                "pairs": [
+                    "Specific Gravity",
+                    "Water Absorption",
+                    "Crushing Value",
+                    "Impact Value",
+                    "Abrasion Value",
+                    "Flakiness Index",
+                    "Elongation Index",
+                    "Bulk Density"
+                ]
+            }
+        }
+    ]
+}

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        @page { size: A4; margin: 1cm; }
+        body { font-family: Helvetica, sans-serif; font-size: 10px; color: #000; }
+        
+        /* Header */
+        .header-container { width: 100%; border-bottom: 3px solid #d45d5d; padding-bottom: 5px; margin-bottom: 10px; }
+        .header-table { width: 100%; }
+        .header-left { width: 20%; vertical-align: middle; }
+        .header-center { width: 60%; text-align: center; vertical-align: middle; }
+        .header-right { width: 20%; text-align: right; vertical-align: top; }
+        
+        .company-name { font-size: 24px; font-weight: bold; color: #d45d5d; text-transform: uppercase; margin: 0; }
+        .company-sub { font-size: 12px; font-weight: bold; margin: 2px 0; }
+        .company-contact { font-size: 9px; }
+        
+        /* QR Code */
+        .qr-code { width: 80px; height: 80px; }
+
+        /* Report Title */
+        .report-title { 
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: 1px solid #000;
+            background-color: #eee;
+            padding: 5px;
+            margin-bottom: 0;
+            margin-top: 10px;
+        }
+
+        /* Meta Table */
+        .meta-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; border: 1px solid #000; }
+        .meta-table td { border: 1px solid #000; padding: 4px; vertical-align: top; }
+        .meta-label { font-weight: bold; width: 30%; background-color: #f9f9f9; }
+        .meta-value { width: 70%; }
+
+        /* Results Table */
+        .results-section { margin-top: 10px; }
+        .section-title { font-weight: bold; margin-bottom: 5px; text-decoration: underline; font-size: 11px; }
+
+        .results-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+        .results-table th, .results-table td { border: 1px solid #000; padding: 5px; text-align: center; font-size: 10px; }
+        .results-table th { background-color: #eee; font-weight: bold; }
+        
+        /* Signature / Footer */
+        .footer-table { width: 100%; margin-top: 30px; }
+        .footer-table td { text-align: right; vertical-align: bottom; }
+        .auth-text { font-weight: bold; margin-bottom: 40px; }
+        .signatory { font-weight: bold; }
+
+        /* Utility */
+        .text-left { text-align: left !important; }
+        .no-border-top { border-top: none !important; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header-container">
+        <table class="header-table">
+            <tr>
+                <td class="header-left">
+                    <!-- Placeholder for Cert Logos (e.g. ISO/NABL) -->
+                    <div style="border:1px dashed #999; padding:5px; text-align:center;">ISO 9001:2015</div>
+                </td>
+                <td class="header-center">
+                    <div class="company-name">STABILITY</div>
+                    <div class="company-sub">Material Testing & Research Laboratories LLP</div>
+                    <div class="company-contact">stabilitynableed@gmail.com | https://stabilitygroup.in/</div>
+                    <div class="company-contact" style="margin-top:2px; font-size:8px;">
+                       Shubham Complex, Nagar Road, Balrpir, Tq. Dist. Beed - 431122
+                    </div>
+                </td>
+                <td class="header-right">
+                    {% if report.qr_code %}
+                        <img src="data:image/png;base64,{{ report.qr_code }}" class="qr-code" />
+                    {% else %}
+                       <div style="width:80px;height:80px;border:1px solid #ccc;display:flex;align-items:center;justify-content:center;">No QR</div>
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Main Title -->
+    <div class="report-title">TEST REPORT OF CC CUBE</div>
+
+    <!-- Meta Data -->
+    <table class="meta-table">
+        <tr>
+            <td class="meta-label">ULR No.</td>
+            <td class="meta-value">{{ report.meta.ulr_no or 'TC1281425000000021F' }}</td>
+        </tr>
+        <tr>
+            <td class="meta-label">Report No.</td>
+            <td class="meta-value">{{ report.meta.report_no }}</td>
+        </tr>
+        <tr>
+            <td class="meta-label">Name & Address of Client</td>
+            <td class="meta-value">{{ report.meta.client }}</td>
+        </tr>
+        <tr>
+            <td class="meta-label">Name of Work</td>
+            <td class="meta-value">{{ report.meta.project_name or 'Kallam Transmission Ltd/Location 5/4 TL' }}</td>
+        </tr>
+        <tr>
+            <td class="meta-label">Date of Sample Receipt</td>
+            <td class="meta-value">{{ report.meta.date }}</td>
+        </tr>
+         <tr>
+            <td class="meta-label">Grade</td>
+            <td class="meta-value">{{ report.meta.grade or 'M-25' }}</td>
+        </tr>
+    </table>
+
+    <!-- Test Results -->
+    {% for test in report.tests %}
+        <div class="results-section">
+            {% for table in test.tables %}
+                <div class="section-title">{{ table.title }}</div>
+                
+                {% if table.type == 'key_value' %}
+                    <!-- Key Value Table rendered as grid -->
+                    <table class="results-table">
+                         {% for row in table.rows %}
+                            <tr>
+                                <th class="text-left" width="40%">{{ row.parameter }}</th>
+                                <td class="text-left">{{ row.value }}</td>
+                            </tr>
+                         {% endfor %}
+                    </table>
+                {% else %}
+                    <!-- Standard Data Grid -->
+                    <table class="results-table">
+                        <thead>
+                            <tr>
+                                {% for header in table.headers %}
+                                    <th>{{ header }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in table.rows %}
+                                <tr>
+                                    {% for header in table.headers %}
+                                        <td>{{ row[header] }}</td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endfor %}
+
+    <!-- Footer / Auth -->
+    <table class="footer-table">
+        <tr>
+            <td>
+                <div class="auth-text">Reviewed and Authorized by</div>
+                <br/><br/>
+                <div class="signatory">
+                    For SMTRL<br/>
+                    Rahul Rahade<br/>
+                    CEO Authorized Signatory
+                </div>
+            </td>
+        </tr>
+    </table>
+    
+    <div style="text-align:center; margin-top:50px; font-size:9px; color:#666;">
+        End of Report
+    </div>
+</body>
+</html>
